@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/login_screen.dart';
+import 'package:ojolali/methods/common_methods.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -12,6 +13,13 @@ class SignupScreenState extends State<SignupScreen> {
   TextEditingController userNameTextEditingController = TextEditingController();
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
+  CommonMethods cMethods = CommonMethods();
+
+
+  checkIfNetworkIsAvailable()
+  {
+    cMethods.checkConnectivity(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +96,9 @@ class SignupScreenState extends State<SignupScreen> {
                       height: 12,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        checkIfNetworkIsAvailable();
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
                           padding: EdgeInsets.symmetric(
