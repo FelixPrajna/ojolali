@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "383980362718",
+    "project_id": "ujian-b1404",
+    "storage_bucket": "ujian-b1404.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383980362718:android:2c50e92a034d0409b3db4f",
+        "android_client_info": {
+          "package_name": "com.example.ojolali"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9VHnA4yqys2vddb9xlUgrJTKQchPGdNI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
