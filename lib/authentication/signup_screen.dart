@@ -30,14 +30,14 @@ class SignupScreenState extends State<SignupScreen> {
   signupFormValidation() {
     if (userNameTextEditingController.text.trim().length < 3) {
       cMethods.displaySnackBar(
-          "your name must be atleast 4 or more characters.", context);
+          "Your name must be at least 3 or more characters.", context);
     } else if (!emailTextEditingController.text.contains("@")) {
-      cMethods.displaySnackBar("please write valid email.", context);
-    } else if (passwordTextEditingController.text.trim().length < 5) {
+      cMethods.displaySnackBar("Please enter a valid email.", context);
+    } else if (passwordTextEditingController.text.trim().length < 6) {
       cMethods.displaySnackBar(
-          "your password must be atleast 6 or more characters.", context);
+          "Your password must be at least 6 or more characters.", context);
     } else {
-      registerNewUser;
+      registerNewUser();
     }
   }
 
@@ -49,31 +49,42 @@ class SignupScreenState extends State<SignupScreen> {
           LoadingDialog(messageText: "Registering your account..."),
     );
 
-    final User? userFirebase = (await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-      email: emailTextEditingController.text.trim(),
-      password: passwordTextEditingController.text.trim(),
-    )
-            .catchError((errorMsg) {
+    try {
+      final User? userFirebase =
+          (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailTextEditingController.text.trim(),
+        password: passwordTextEditingController.text.trim(),
+      ))
+              .user;
+
+      if (userFirebase != null) {
+        DatabaseReference usersRef = FirebaseDatabase.instance
+            .ref()
+            .child("users")
+            .child(userFirebase.uid);
+        Map userDataMap = {
+          "name": userNameTextEditingController.text.trim(),
+          "email": emailTextEditingController.text.trim(),
+          "phone": userPhoneTextEditingController.text.trim(),
+          "id": userFirebase.uid,
+          "blockStatus": "no",
+        };
+        usersRef.set(userDataMap);
+
+        if (!context.mounted) return;
+
+        Navigator.pop(context);
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (c) => HomePage()),
+          (route) => false,
+        );
+      }
+    } catch (errorMsg) {
       Navigator.pop(context);
       cMethods.displaySnackBar(errorMsg.toString(), context);
-    }))
-        .user;
-    if (!context.mounted) return;
-    Navigator.pop(context);
-
-    DatabaseReference usersRef =
-        FirebaseDatabase.instance.ref().child("users").child(userFirebase!.uid);
-    Map userDataMap = {
-      "name": userNameTextEditingController.text.trim(),
-      "email": emailTextEditingController.text.trim(),
-      "phone": userPhoneTextEditingController.text.trim(),
-      "id": userFirebase.uid,
-      "blockStatus": "no",
-    };
-    usersRef.set(userDataMap);
-
-    Navigator.push(context, MaterialPageRoute(builder: (c) => HomePage()));
+    }
   }
 
   @override
@@ -84,16 +95,14 @@ class SignupScreenState extends State<SignupScreen> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              Image.asset("images/logo.png"), // buat gambar
-
+              Image.asset("images/logo.png"),
               const Text(
-                "Create a user 's Account",
+                "Create a user's Account",
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(22),
                 child: Column(
@@ -107,7 +116,7 @@ class SignupScreenState extends State<SignupScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,
                       ),
@@ -121,12 +130,12 @@ class SignupScreenState extends State<SignupScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 22,
                     ),
                     TextField(
@@ -138,12 +147,12 @@ class SignupScreenState extends State<SignupScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 22,
                     ),
                     TextField(
@@ -156,12 +165,12 @@ class SignupScreenState extends State<SignupScreen> {
                           fontSize: 14,
                         ),
                       ),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 15,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
@@ -170,7 +179,7 @@ class SignupScreenState extends State<SignupScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.purple,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 80, vertical: 10)),
                       child: const Text(
                         "Sign Up",
@@ -182,7 +191,7 @@ class SignupScreenState extends State<SignupScreen> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (c) => LoginScreen()));
                         },
-                        child: Text(
+                        child: const Text(
                           "Already have an Account? Login Here",
                           style: TextStyle(color: Colors.grey),
                         ))
