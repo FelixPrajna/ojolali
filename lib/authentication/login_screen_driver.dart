@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/signup_screen_driver.dart';
 import 'package:ojolali/methods/common_methods.dart';
-import 'package:ojolali/pages/home_page.dart';
+import 'package:ojolali/pages/dashboard.dart';
 import 'package:ojolali/widgets/loading_dialog.dart';
 
 class LoginScreenDriver extends StatefulWidget {
@@ -66,7 +66,7 @@ class LoginScreenDrivertate extends State<LoginScreenDriver> {
             // misalnya, ini mungkin hanya untuk mendapatkan nama pengguna
             String userName = (snap.snapshot.value as Map)["name"];
             Navigator.push(
-                context, MaterialPageRoute(builder: (c) => HomePage()));
+                context, MaterialPageRoute(builder: (c) => Dashboard()));
           } else {
             FirebaseAuth.instance.signOut();
             cMethods.displaySnackBar(

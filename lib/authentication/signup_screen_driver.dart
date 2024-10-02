@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/login_screen_driver.dart';
 import 'package:ojolali/methods/common_methods.dart';
 import 'package:ojolali/pages/dashboard.dart';
-import 'package:ojolali/pages/home_page.dart';
 import 'package:ojolali/widgets/loading_dialog.dart';
 
 class SignupScreenDriver extends StatefulWidget {
