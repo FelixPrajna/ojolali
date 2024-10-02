@@ -26,12 +26,12 @@ class LoadingDialog extends StatelessWidget {
           padding: EdgeInsets.all(16),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
-              CircularProgressIndicator(
+              const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               ),
               Text(

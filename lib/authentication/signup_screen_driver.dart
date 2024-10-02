@@ -1,24 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:ojolali/authentication/login_screen.dart';
+import 'package:ojolali/authentication/login_screen_driver.dart';
 import 'package:ojolali/methods/common_methods.dart';
+import 'package:ojolali/pages/dashboard.dart';
 import 'package:ojolali/pages/home_page.dart';
 import 'package:ojolali/widgets/loading_dialog.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class SignupScreenDriver extends StatefulWidget {
+  const SignupScreenDriver({super.key});
 
   @override
-  State<SignupScreen> createState() => SignupScreenState();
+  State<SignupScreenDriver> createState() => SignupScreenDriverState();
 }
 
-class SignupScreenState extends State<SignupScreen> {
+class SignupScreenDriverState extends State<SignupScreenDriver> {
   TextEditingController userNameTextEditingController = TextEditingController();
   TextEditingController userPhoneTextEditingController =
       TextEditingController();
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
+  TextEditingController vehicleModelTextEditingController =
+      TextEditingController();
+  TextEditingController vehicleColorTextEditingController =
+      TextEditingController();
+  TextEditingController vehicleNumberTextEditingController =
+      TextEditingController();
   CommonMethods cMethods = CommonMethods();
 
   checkIfNetworkIsAvailable() {
@@ -68,7 +75,7 @@ class SignupScreenState extends State<SignupScreen> {
       if (userFirebase != null) {
         DatabaseReference usersRef = FirebaseDatabase.instance
             .ref()
-            .child("users")
+            .child("drivers")
             .child(userFirebase.uid);
         Map userDataMap = {
           "name": userNameTextEditingController.text.trim(),
@@ -85,7 +92,7 @@ class SignupScreenState extends State<SignupScreen> {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (c) => HomePage()),
+          MaterialPageRoute(builder: (c) => Dashboard()),
           (route) => false,
         );
       }
@@ -103,12 +110,24 @@ class SignupScreenState extends State<SignupScreen> {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              Image.asset("images/logo.png"),
-              const Text(
-                "Create a user's Account",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(
+                height: 20,
+              ),
+              const CircleAvatar(
+                radius: 86,
+                backgroundImage: AssetImage("images/avatarman.png"),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Text(
+                  "Choose Image",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Padding(
@@ -119,7 +138,7 @@ class SignupScreenState extends State<SignupScreen> {
                       controller: userNameTextEditingController,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                        labelText: "User Name",
+                        labelText: "Your Name",
                         labelStyle: TextStyle(
                           fontSize: 14,
                         ),
@@ -129,11 +148,14 @@ class SignupScreenState extends State<SignupScreen> {
                         fontSize: 15,
                       ),
                     ),
+                    const SizedBox(
+                      height: 22,
+                    ),
                     TextField(
                       controller: userPhoneTextEditingController,
                       keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
-                        labelText: "User Phone",
+                        labelText: "Your Phone",
                         labelStyle: TextStyle(
                           fontSize: 14,
                         ),
@@ -150,7 +172,7 @@ class SignupScreenState extends State<SignupScreen> {
                       controller: emailTextEditingController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
-                        labelText: "User Email",
+                        labelText: "Your Email",
                         labelStyle: TextStyle(
                           fontSize: 14,
                         ),
@@ -168,7 +190,7 @@ class SignupScreenState extends State<SignupScreen> {
                       obscureText: true,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                        labelText: "User Password",
+                        labelText: "Your Password",
                         labelStyle: TextStyle(
                           fontSize: 14,
                         ),
@@ -179,7 +201,58 @@ class SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     const SizedBox(
-                      height: 12,
+                      height: 22,
+                    ),
+                    TextField(
+                      controller: vehicleModelTextEditingController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        labelText: "Your car Model",
+                        labelStyle: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 22,
+                    ),
+                    TextField(
+                      controller: vehicleColorTextEditingController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        labelText: "Your car Color",
+                        labelStyle: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 22,
+                    ),
+                    TextField(
+                      controller: vehicleNumberTextEditingController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        labelText: "Your Car Number",
+                        labelStyle: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 22,
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -196,8 +269,10 @@ class SignupScreenState extends State<SignupScreen> {
                     ),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (c) => LoginScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (c) => LoginScreenDriver()));
                         },
                         child: const Text(
                           "Already have an Account? Login Here",
