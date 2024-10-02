@@ -30,10 +30,13 @@ class SignupScreenState extends State<SignupScreen> {
   signupFormValidation() {
     if (userNameTextEditingController.text.trim().length < 3) {
       cMethods.displaySnackBar(
-          "Your name must be at least 3 or more characters.", context);
+          "Your name must be at least 4 or more characters.", context);
+    } else if (userPhoneTextEditingController.text.trim().length < 7) {
+      cMethods.displaySnackBar(
+          "your phone number must be atleast 8 or more characters.", context);
     } else if (!emailTextEditingController.text.contains("@")) {
       cMethods.displaySnackBar("Please enter a valid email.", context);
-    } else if (passwordTextEditingController.text.trim().length < 6) {
+    } else if (passwordTextEditingController.text.trim().length < 5) {
       cMethods.displaySnackBar(
           "Your password must be at least 6 or more characters.", context);
     } else {
@@ -50,12 +53,16 @@ class SignupScreenState extends State<SignupScreen> {
     );
 
     try {
-      final User? userFirebase =
-          (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final User? userFirebase = (await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
         email: emailTextEditingController.text.trim(),
         password: passwordTextEditingController.text.trim(),
-      ))
-              .user;
+      )
+              .catchError((errorMsg) {
+        Navigator.pop(context);
+        cMethods.displaySnackBar(errorMsg.toString(), context);
+      }))
+          .user;
 
       if (userFirebase != null) {
         DatabaseReference usersRef = FirebaseDatabase.instance
