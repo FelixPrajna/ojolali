@@ -31,9 +31,10 @@ class SignupScreenState extends State<SignupScreen> {
     if (userNameTextEditingController.text.trim().length < 3) {
       cMethods.displaySnackBar(
           "Your name must be at least 4 or more characters.", context);
-    } else if (userPhoneTextEditingController.text.trim().length < 7) {
+    } else if (userPhoneTextEditingController.text.trim().length < 7 ||
+        int.tryParse(userPhoneTextEditingController.text) == null) {
       cMethods.displaySnackBar(
-          "your phone number must be atleast 8 or more characters.", context);
+          "Your phone number must be at least 8 or more digits.", context);
     } else if (!emailTextEditingController.text.contains("@")) {
       cMethods.displaySnackBar("Please enter a valid email.", context);
     } else if (passwordTextEditingController.text.trim().length < 5) {
@@ -130,7 +131,7 @@ class SignupScreenState extends State<SignupScreen> {
                     ),
                     TextField(
                       controller: userPhoneTextEditingController,
-                      keyboardType: TextInputType.text,
+                      keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
                         labelText: "User Phone",
                         labelStyle: TextStyle(
