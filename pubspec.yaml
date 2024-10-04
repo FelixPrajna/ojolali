@@ -83,6 +83,7 @@ flutter:
     - images/tracking.png
     - images/tripscompleted.png
     - images/uberexec.png
+    - themes/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
