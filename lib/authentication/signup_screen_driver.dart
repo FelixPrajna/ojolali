@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ojolali/authentication/login_screen_driver.dart';
 import 'package:ojolali/methods/common_methods.dart';
 import 'package:ojolali/pages/dashboard.dart';
@@ -26,13 +30,35 @@ class SignupScreenDriverState extends State<SignupScreenDriver> {
   TextEditingController vehicleNumberTextEditingController =
       TextEditingController();
   CommonMethods cMethods = CommonMethods();
+  XFile? imageFile;
+  String urlOfUploadedImage = "";
 
   checkIfNetworkIsAvailable() {
     cMethods.checkConnectivity(context);
 
-    signupFormValidation();
+   if(imageFile != null)
+   {
+    uploadImageToStorage();
+   }
+   else
+   {
+    cMethods.displaySnackBar("Please choose image first,", context);
+   }
   }
 
+uploadImageToStorage() async
+{
+  String imageIDName = DateTime.now().millisecondsSinceEpoch.toString();
+  Reference referenceImage = FirebaseStorage.instance.ref().child("Images").child(imageIDName);
+
+  UploadTask uploadtask = referenceImage.putFile(File(imageFile!.path));
+  TaskSnapshot snapshot = await uploadtask;
+  urlOfUploadedImage = await snapshot.ref.getDownloadURL();
+
+  setState(() {
+    urlOfUploadedImage;
+  });
+}
   signupFormValidation() {
     if (userNameTextEditingController.text.trim().length < 3) {
       cMethods.displaySnackBar(
@@ -101,6 +127,19 @@ class SignupScreenDriverState extends State<SignupScreenDriver> {
     }
   }
 
+  chooseImageFromGalery() async
+  {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if(pickedFile != null)
+    {
+      setState(() {
+        imageFile = pickedFile;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,15 +151,38 @@ class SignupScreenDriverState extends State<SignupScreenDriver> {
               const SizedBox(
                 height: 20,
               ),
+
+              imageFile == null ?
               const CircleAvatar(
                 radius: 86,
                 backgroundImage: AssetImage("images/avatarman.png"),
-              ),
+              ) : Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                  image: DecorationImage(
+                    fit: BoxFit.fitHeight,
+                    image: FileImage(
+                      File(
+                        imageFile!.path,
+                      ),
+                    )
+                  )
+                ),
+                
+                ),
+
+
               const SizedBox(
                 height: 10,
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: ()
+                 {
+                  chooseImageFromGalery();
+                 },
                 child: const Text(
                   "Choose Image",
                   style: TextStyle(
