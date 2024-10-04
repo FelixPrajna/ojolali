@@ -120,7 +120,7 @@ uploadImageToStorage() async
           "carColor": vehicleColorTextEditingController.text.trim(),
           "carModel": vehicleModelTextEditingController.text.trim(),
           "carNumber": vehicleNumberTextEditingController.text.trim(),
-        }
+        };
         Map driverDataMap = {
           "photo": urlOfUploadedImage,
           "car_details": driverCarInfo,
