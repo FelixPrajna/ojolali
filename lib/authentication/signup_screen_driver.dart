@@ -38,7 +38,7 @@ class SignupScreenDriverState extends State<SignupScreenDriver> {
 
    if(imageFile != null)
    {
-    uploadImageToStorage();
+    signupFormValidation();
    }
    else
    {
@@ -58,6 +58,7 @@ uploadImageToStorage() async
   setState(() {
     urlOfUploadedImage;
   });
+  registerNewDriver();
 }
   signupFormValidation() {
     if (userNameTextEditingController.text.trim().length < 3) {
@@ -72,12 +73,24 @@ uploadImageToStorage() async
     } else if (passwordTextEditingController.text.trim().length < 5) {
       cMethods.displaySnackBar(
           "Your password must be at least 6 or more characters.", context);
-    } else {
-      registerNewUser();
+    } 
+    else if (vehicleModelTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar(
+          "Please Write Your Car Model", context);
+    }
+    else if (vehicleColorTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar(
+          "Please Write Your Car Color", context);
+    }
+    else if (vehicleNumberTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar(
+          "Please Write Your Car Number.", context);
+    }else {
+      uploadImageToStorage();
     }
   }
 
-  registerNewUser() async {
+  registerNewDriver() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -102,14 +115,22 @@ uploadImageToStorage() async
             .ref()
             .child("drivers")
             .child(userFirebase.uid);
-        Map userDataMap = {
+
+        Map driverCarInfo = {
+          "carColor": vehicleColorTextEditingController.text.trim(),
+          "carModel": vehicleModelTextEditingController.text.trim(),
+          "carNumber": vehicleNumberTextEditingController.text.trim(),
+        }
+        Map driverDataMap = {
+          "photo": urlOfUploadedImage,
+          "car_details": driverCarInfo,
           "name": userNameTextEditingController.text.trim(),
           "email": emailTextEditingController.text.trim(),
           "phone": userPhoneTextEditingController.text.trim(),
           "id": userFirebase.uid,
           "blockStatus": "no",
         };
-        usersRef.set(userDataMap);
+        usersRef.set(driverDataMap);
 
         if (!context.mounted) return;
 
