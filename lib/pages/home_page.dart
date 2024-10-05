@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +19,7 @@ class _HomePageState extends State<HomePage> {
       Completer<GoogleMapController>();
   GoogleMapController? controllerGoogleMap;
   Position? currentPositionOfUser;
+  GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
 
   void updateMapTheme(GoogleMapController controller) {
     getJsonFileFromThemes("themes/night_style.json")
@@ -54,22 +54,147 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        GoogleMap(
-          mapType: MapType.normal,
-          myLocationEnabled: true,
-          initialCameraPosition: googlePlexInitialPosition,
-          onMapCreated: (GoogleMapController mapController) {
-            controllerGoogleMap = mapController;
-            updateMapTheme(controllerGoogleMap!);
+      key: sKey,
+      drawer: Container(
+        width: 255,
+        color: Colors.black87,
+        child: Drawer(
+          backgroundColor: Colors.white10,
+          child: ListView(
+            children: [
+              //header
+              Container(
+                color: Colors.white,
+                height: 160,
+                child: DrawerHeader(
+                  decoration: const BoxDecoration(color: Colors.white10),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "images/user_icon.png",
+                        width: 60,
+                        height: 60,
+                      ),
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            userName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Text(
+                            "profile",
+                            style: const TextStyle(
+                              color: Colors.white10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-            googleMapCompleterController.complete(controllerGoogleMap);
+              const Divider(
+                height: 1,
+                color: Colors.white,
+                thickness: 1,
+              ),
 
-            getCurrentLiveLocationOfUser();
-          },
+              const SizedBox(
+                height: 10,
+              ),
+
+              //body
+              ListTile(
+                leading: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.info,
+                    color: Colors.grey,
+                  ),
+                ),
+                title: const Text(
+                  "About",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+
+              ListTile(
+                leading: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.grey,
+                  ),
+                ),
+                title: const Text(
+                  "Logout",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
-    ));
+      ),
+      body: Stack(
+        children: [
+          //google map
+          GoogleMap(
+            mapType: MapType.normal,
+            myLocationEnabled: true,
+            initialCameraPosition: googlePlexInitialPosition,
+            onMapCreated: (GoogleMapController mapController) {
+              controllerGoogleMap = mapController;
+              updateMapTheme(controllerGoogleMap!);
+
+              googleMapCompleterController.complete(controllerGoogleMap);
+
+              getCurrentLiveLocationOfUser();
+            },
+          ),
+
+          //drawer button
+          Positioned(
+            top: 36,
+            left: 19,
+            child: GestureDetector(
+              onTap: () {
+                sKey.currentState!.openDrawer();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 3,
+                      spreadRadius: 0.5,
+                      offset: Offset(0.7, 0.7),
+                    ),
+                  ],
+                ),
+                child: const CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 20,
+                  child: Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
