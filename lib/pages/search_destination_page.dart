@@ -9,7 +9,8 @@ class SearchDestinationPage extends StatefulWidget {
 
 class _SearchDestinationPageState extends State<SearchDestinationPage> {
   TextEditingController pickupTextEditingController = TextEditingController();
-  TextEditingController destinationTextEditingController = TextEditingController();
+  TextEditingController destinationTextEditingController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,9 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                       left: 24, top: 48, right: 26, bottom: 20),
                   child: Column(
                     children: [
-                      const SizedBox(height: 6,),
+                      const SizedBox(
+                        height: 6,
+                      ),
 
                       // Icon button - title
                       Stack(
@@ -46,7 +49,8 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                             onTap: () {
                               // Implementasi aksi tombol kembali
                             },
-                            child: const Icon(Icons.arrow_back, color: Colors.white),
+                            child: const Icon(Icons.arrow_back,
+                                color: Colors.white),
                           ),
                           const Center(
                             child: Text(
@@ -60,22 +64,27 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 18,),
+                      const SizedBox(
+                        height: 18,
+                      ),
 
                       // Pickup text field
                       Row(
                         children: [
                           Image.asset(
-                            "assets/images/intial.png",
+                            "images/initial.png",
                             height: 16,
                             width: 16,
                           ),
-                          const SizedBox(width: 18,),
+                          const SizedBox(
+                            width: 18,
+                          ),
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5), // Huruf besar B
+                                borderRadius:
+                                    BorderRadius.circular(5), // Huruf besar B
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(3),
@@ -88,7 +97,9 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                                     border: InputBorder.none,
                                     isDense: true,
                                     contentPadding: EdgeInsets.only(
-                                      left: 11, top: 9, bottom: 9,
+                                      left: 11,
+                                      top: 9,
+                                      bottom: 9,
                                     ),
                                   ),
                                 ),
@@ -98,22 +109,27 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 11,),
+                      const SizedBox(
+                        height: 11,
+                      ),
 
                       // Destination text field
                       Row(
                         children: [
                           Image.asset(
-                            "assets/images/final.png",
+                            "images/final.png",
                             height: 16,
                             width: 16,
                           ),
-                          const SizedBox(width: 18,),
+                          const SizedBox(
+                            width: 18,
+                          ),
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5), // Huruf besar B
+                                borderRadius:
+                                    BorderRadius.circular(5), // Huruf besar B
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(3),
@@ -126,7 +142,9 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                                     border: InputBorder.none,
                                     isDense: true,
                                     contentPadding: EdgeInsets.only(
-                                      left: 11, top: 9, bottom: 9,
+                                      left: 11,
+                                      top: 9,
+                                      bottom: 9,
                                     ),
                                   ),
                                 ),
