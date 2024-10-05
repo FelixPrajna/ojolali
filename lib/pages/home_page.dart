@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ojolali/authentication/login_screen_user.dart';
 import 'package:ojolali/global/global.dart';
 import 'package:ojolali/methods/common_methods.dart';
+import 'package:ojolali/pages/search_destination_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -260,8 +261,7 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                     onPressed: ()
                     {
-
-
+                      Navigator.push(context, MaterialPageRoute(builder: (c)=> SearchDestinationPage()));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
