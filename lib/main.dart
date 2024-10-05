@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/login_screen_driver.dart';
 import 'package:ojolali/authentication/login_screen_user.dart';
+import 'package:ojolali/pages/home_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
@@ -27,7 +29,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginSelectionScreen(),
+      home: FirebaseAuth.instance.currentUser == null
+          ? LoginSelectionScreen()
+          : HomePage(),
     );
   }
 }

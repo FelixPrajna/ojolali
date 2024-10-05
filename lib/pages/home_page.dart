@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ojolali/authentication/login_screen_user.dart';
 import 'package:ojolali/global/global.dart';
+import 'package:ojolali/methods/common_methods.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   GoogleMapController? controllerGoogleMap;
   Position? currentPositionOfUser;
   GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
+  CommonMethods cMethods = CommonMethods();
 
   void updateMapTheme(GoogleMapController controller) {
     getJsonFileFromThemes("themes/night_style.json")
@@ -49,6 +54,39 @@ class _HomePageState extends State<HomePage> {
         CameraPosition(target: positionOfUserInLatLng, zoom: 15);
     controllerGoogleMap!
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    await getUSerInfoAndCheckBlockStatus();
+  }
+
+  getUSerInfoAndCheckBlockStatus() async {
+    DatabaseReference usersRef = FirebaseDatabase.instance
+        .ref()
+        .child("users")
+        .child(FirebaseAuth.instance.currentUser!.uid);
+
+    await usersRef.once().then((snap) {
+      if (snap.snapshot.value != null) {
+        if ((snap.snapshot.value as Map)["blockStatus"] == "no") {
+          // Berikan nama pengguna, tetapi tidak ada fungsi `userName`, ini sebaiknya diganti atau dikelola secara berbeda.
+          // misalnya, ini mungkin hanya untuk mendapatkan nama pengguna
+          setState(() {
+            userName = (snap.snapshot.value as Map)["name"];
+          });
+        } else {
+          FirebaseAuth.instance.signOut();
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (c) => LoginScreen()));
+
+          cMethods.displaySnackBar(
+              "You are blocked. Contact admin: felixbanana9@gmail.com",
+              context);
+        }
+      } else {
+        FirebaseAuth.instance.signOut();
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => LoginScreen()));
+      }
+    });
   }
 
   @override
