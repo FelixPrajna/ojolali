@@ -36,30 +36,28 @@ class SignupScreenDriverState extends State<SignupScreenDriver> {
   checkIfNetworkIsAvailable() {
     cMethods.checkConnectivity(context);
 
-   if(imageFile != null)
-   {
-    signupFormValidation();
-   }
-   else
-   {
-    cMethods.displaySnackBar("Please choose image first,", context);
-   }
+    if (imageFile != null) {
+      signupFormValidation();
+    } else {
+      cMethods.displaySnackBar("Please choose image first,", context);
+    }
   }
 
-uploadImageToStorage() async
-{
-  String imageIDName = DateTime.now().millisecondsSinceEpoch.toString();
-  Reference referenceImage = FirebaseStorage.instance.ref().child("Images").child(imageIDName);
+  uploadImageToStorage() async {
+    String imageIDName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference referenceImage =
+        FirebaseStorage.instance.ref().child("Images").child(imageIDName);
 
-  UploadTask uploadtask = referenceImage.putFile(File(imageFile!.path));
-  TaskSnapshot snapshot = await uploadtask;
-  urlOfUploadedImage = await snapshot.ref.getDownloadURL();
+    UploadTask uploadtask = referenceImage.putFile(File(imageFile!.path));
+    TaskSnapshot snapshot = await uploadtask;
+    urlOfUploadedImage = await snapshot.ref.getDownloadURL();
 
-  setState(() {
-    urlOfUploadedImage;
-  });
-  registerNewDriver();
-}
+    setState(() {
+      urlOfUploadedImage;
+    });
+    registerNewDriver();
+  }
+
   signupFormValidation() {
     if (userNameTextEditingController.text.trim().length < 3) {
       cMethods.displaySnackBar(
@@ -73,19 +71,13 @@ uploadImageToStorage() async
     } else if (passwordTextEditingController.text.trim().length < 5) {
       cMethods.displaySnackBar(
           "Your password must be at least 6 or more characters.", context);
-    } 
-    else if (vehicleModelTextEditingController.text.trim().isEmpty) {
-      cMethods.displaySnackBar(
-          "Please Write Your Car Model", context);
-    }
-    else if (vehicleColorTextEditingController.text.trim().isEmpty) {
-      cMethods.displaySnackBar(
-          "Please Write Your Car Color", context);
-    }
-    else if (vehicleNumberTextEditingController.text.trim().isEmpty) {
-      cMethods.displaySnackBar(
-          "Please Write Your Car Number.", context);
-    }else {
+    } else if (vehicleModelTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar("Please Write Your Car Model", context);
+    } else if (vehicleColorTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar("Please Write Your Car Color", context);
+    } else if (vehicleNumberTextEditingController.text.trim().isEmpty) {
+      cMethods.displaySnackBar("Please Write Your Car Number.", context);
+    } else {
       uploadImageToStorage();
     }
   }
@@ -148,18 +140,16 @@ uploadImageToStorage() async
     }
   }
 
-  chooseImageFromGalery() async
-  {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+  chooseImageFromGalery() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    if(pickedFile != null)
-    {
+    if (pickedFile != null) {
       setState(() {
         imageFile = pickedFile;
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -172,38 +162,32 @@ uploadImageToStorage() async
               const SizedBox(
                 height: 20,
               ),
-
-              imageFile == null ?
-              const CircleAvatar(
-                radius: 86,
-                backgroundImage: AssetImage("images/avatarman.png"),
-              ) : Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey,
-                  image: DecorationImage(
-                    fit: BoxFit.fitHeight,
-                    image: FileImage(
-                      File(
-                        imageFile!.path,
-                      ),
+              imageFile == null
+                  ? const CircleAvatar(
+                      radius: 86,
+                      backgroundImage: AssetImage("images/avatarman.png"),
                     )
-                  )
-                ),
-                
-                ),
-
-
+                  : Container(
+                      width: 180,
+                      height: 180,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey,
+                          image: DecorationImage(
+                              fit: BoxFit.fitHeight,
+                              image: FileImage(
+                                File(
+                                  imageFile!.path,
+                                ),
+                              ))),
+                    ),
               const SizedBox(
                 height: 10,
               ),
               GestureDetector(
-                onTap: ()
-                 {
+                onTap: () {
                   chooseImageFromGalery();
-                 },
+                },
                 child: const Text(
                   "Choose Image",
                   style: TextStyle(
