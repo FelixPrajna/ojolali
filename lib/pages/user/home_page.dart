@@ -12,6 +12,7 @@ import 'package:ojolali/global/global.dart';
 import 'package:ojolali/main.dart';
 import 'package:ojolali/methods/common_methods.dart';
 import 'package:ojolali/pages/user/search_destination_page.dart';
+import 'package:ojolali/pages/user/about_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -153,19 +154,25 @@ class _HomePageState extends State<HomePage> {
               ),
 
               //body
-              ListTile(
-                leading: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.info,
-                    color: Colors.grey,
-                  ),
-                ),
-                title: const Text(
-                  "About",
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
+           ListTile(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (c) => const AboutPage()), // Navigasi ke halaman About
+              );
+            },
+            icon: const Icon(
+              Icons.info,
+              color: Colors.grey,
+             ),
+            ),
+            title: const Text(
+              "About",
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+
 
               GestureDetector(
                 onTap: () {
@@ -307,3 +314,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+

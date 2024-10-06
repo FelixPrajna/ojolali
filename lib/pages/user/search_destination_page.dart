@@ -19,7 +19,7 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
         child: Column(
           children: [
             Card(
-              elevation: 10, // Perbaikan huruf kecil
+              elevation: 10,
               child: Container(
                 height: 230,
                 decoration: const BoxDecoration(
@@ -47,7 +47,7 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // Implementasi aksi tombol kembali
+                              Navigator.pop(context); // Aksi untuk kembali
                             },
                             child: const Icon(Icons.arrow_back,
                                 color: Colors.white),
@@ -83,8 +83,7 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(5), // Huruf besar B
+                                borderRadius: BorderRadius.circular(5),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(3),
@@ -128,13 +127,13 @@ class _SearchDestinationPageState extends State<SearchDestinationPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.circular(5), // Huruf besar B
+                                borderRadius: BorderRadius.circular(5),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(3),
                                 child: TextField(
-                                  controller: destinationTextEditingController,
+                                  controller:
+                                      destinationTextEditingController,
                                   decoration: const InputDecoration(
                                     hintText: "Destination Address",
                                     fillColor: Colors.white12,
