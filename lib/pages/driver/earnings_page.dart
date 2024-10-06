@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import intl for currency formatting
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class EarningsPage extends StatefulWidget {
-  final String userId; // Add userId to identify the account
+  final String userId;
   const EarningsPage({super.key, required this.userId});
 
   @override
@@ -11,10 +12,8 @@ class EarningsPage extends StatefulWidget {
 }
 
 class _EarningsPageState extends State<EarningsPage> {
-  final List<double> earnings = [];
-  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> orders = []; // To store trip-based orders
   double totalEarnings = 0;
-
   final NumberFormat currencyFormatter = NumberFormat.currency(
     locale: 'id_ID', // Locale Indonesia
     symbol: 'Rp', // Symbol for Rupiah
@@ -24,51 +23,37 @@ class _EarningsPageState extends State<EarningsPage> {
   @override
   void initState() {
     super.initState();
-    _loadEarnings();
+    _loadEarnings(); // Load total earnings and orders
   }
 
-  // Function to load earnings from SharedPreferences based on userId
   Future<void> _loadEarnings() async {
     final prefs = await SharedPreferences.getInstance();
+    final List<String>? tripList = prefs.getStringList('tripHistory');
 
-    // Load earnings for the specific user
-    final List<String>? earningsList =
-        prefs.getStringList('${widget.userId}_earnings');
-    final double? savedTotalEarnings =
-        prefs.getDouble('${widget.userId}_totalEarnings');
+    if (tripList != null) {
+      double totalFromTrips = 0;
 
-    if (earningsList != null) {
-      setState(() {
-        earnings.clear();
-        earnings.addAll(earningsList.map((e) => double.parse(e)).toList());
-        totalEarnings = savedTotalEarnings ?? 0;
-      });
-    }
-  }
+      // Iterate through the trip history and calculate earnings for each trip
+      for (var tripJson in tripList) {
+        final trip = Map<String, dynamic>.from(jsonDecode(tripJson));
 
-  // Function to save earnings to SharedPreferences based on userId
-  Future<void> _saveEarnings() async {
-    final prefs = await SharedPreferences.getInstance();
+        final distanceKm = trip['distance'] as double;
+        final earningsFromTrip = (distanceKm * 10) * 1000;
+        totalFromTrips += earningsFromTrip;
 
-    // Save earnings for the specific user
-    final List<String> earningsStringList =
-        earnings.map((e) => e.toString()).toList();
-    await prefs.setStringList('${widget.userId}_earnings', earningsStringList);
-    await prefs.setDouble('${widget.userId}_totalEarnings', totalEarnings);
-  }
-
-  // Function to add new order earnings
-  void _addEarning() {
-    if (_controller.text.isNotEmpty) {
-      final earning = double.tryParse(_controller.text);
-      if (earning != null) {
-        setState(() {
-          earnings.add(earning);
-          totalEarnings += earning;
+        // Add to order history
+        orders.add({
+          'orderId': trip['orderId'],
+          'startLocation': trip['startLocation'],
+          'endLocation': trip['endLocation'],
+          'distance': distanceKm,
+          'earnings': earningsFromTrip,
         });
-        _controller.clear();
-        _saveEarnings(); // Save data after adding earnings
       }
+
+      setState(() {
+        totalEarnings = totalFromTrips;
+      });
     }
   }
 
@@ -83,46 +68,28 @@ class _EarningsPageState extends State<EarningsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Input field for manual entry
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Masukkan Pendapatan Order',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _addEarning,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink,
-                  ),
-                  child: const Text("Tambahkan"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Display list of earnings
             Expanded(
               child: ListView.builder(
-                itemCount: earnings.length,
+                itemCount: orders.length,
                 itemBuilder: (context, index) {
+                  final order = orders[index];
                   return ListTile(
-                    title: Text(
-                      "Order ${index + 1}: ${currencyFormatter.format(earnings[index])}",
+                    title: Text("Order ID: ${order['orderId']}"),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Dari: ${order['startLocation']}"),
+                        Text("Ke: ${order['endLocation']}"),
+                        Text("Jarak: ${order['distance']} KM"),
+                        Text(
+                            "Pendapatan: ${currencyFormatter.format(order['earnings'])}")
+                      ],
                     ),
                   );
                 },
               ),
             ),
-
-            // Total earnings display
+            const SizedBox(height: 20),
             Text(
               "Total Pendapatan: ${currencyFormatter.format(totalEarnings)}",
               style: const TextStyle(
