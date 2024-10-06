@@ -11,7 +11,7 @@ import 'package:ojolali/authentication/login_screen_user.dart';
 import 'package:ojolali/global/global.dart';
 import 'package:ojolali/main.dart';
 import 'package:ojolali/methods/common_methods.dart';
-import 'package:ojolali/pages/search_destination_page.dart';
+import 'package:ojolali/pages/user/search_destination_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

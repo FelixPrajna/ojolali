@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/signup_screen_user.dart';
 import 'package:ojolali/methods/common_methods.dart';
-import 'package:ojolali/pages/home_page.dart';
+import 'package:ojolali/pages/user/home_page.dart';
 import 'package:ojolali/widgets/loading_dialog.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:ojolali/authentication/login_screen_driver.dart';
 import 'package:ojolali/authentication/login_screen_user.dart';
-import 'package:ojolali/pages/home_page.dart';
+import 'package:ojolali/pages/user/home_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
