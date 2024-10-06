@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
     await usersRef.once().then((snap) {
       if (snap.snapshot.value != null) {
         if ((snap.snapshot.value as Map)["blockStatus"] == "no") {
-          // Berikan nama pengguna, tetapi tidak ada fungsi `userName`, ini sebaiknya diganti atau dikelola secara berbeda.
+          // Berikan nama pengguna, tetapi tidak ada fungsi userName, ini sebaiknya diganti atau dikelola secara berbeda.
           // misalnya, ini mungkin hanya untuk mendapatkan nama pengguna
           setState(() {
             userName = (snap.snapshot.value as Map)["name"];
@@ -154,32 +154,33 @@ class _HomePageState extends State<HomePage> {
               ),
 
               //body
-           ListTile(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (c) => const AboutPage()), // Navigasi ke halaman About
-              );
-            },
-            icon: const Icon(
-              Icons.info,
-              color: Colors.grey,
-             ),
-            ),
-            title: const Text(
-              "About",
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-
+              ListTile(
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (c) =>
+                              const AboutPage()), // Navigasi ke halaman About
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.info,
+                    color: Colors.grey,
+                  ),
+                ),
+                title: const Text(
+                  "About",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
 
               GestureDetector(
                 onTap: () {
                   FirebaseAuth.instance.signOut();
 
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (c) => MyApp()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (c) => LoginScreen()));
                 },
                 child: ListTile(
                   leading: IconButton(
@@ -314,4 +315,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
