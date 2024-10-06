@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ojolali/authentication/login_screen_user.dart';
 import 'package:ojolali/global/global.dart';
+import 'package:ojolali/main.dart';
 import 'package:ojolali/methods/common_methods.dart';
 import 'package:ojolali/pages/search_destination_page.dart';
 
@@ -77,8 +78,7 @@ class _HomePageState extends State<HomePage> {
         } else {
           FirebaseAuth.instance.signOut();
 
-          Navigator.push(
-              context, MaterialPageRoute(builder: (c) => LoginScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (c) => MyApp()));
 
           cMethods.displaySnackBar(
               "You are blocked. Contact admin: felixbanana9@gmail.com",
@@ -86,8 +86,7 @@ class _HomePageState extends State<HomePage> {
         }
       } else {
         FirebaseAuth.instance.signOut();
-        Navigator.push(
-            context, MaterialPageRoute(builder: (c) => LoginScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (c) => MyApp()));
       }
     });
   }
@@ -172,8 +171,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   FirebaseAuth.instance.signOut();
 
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (c) => LoginScreen()));
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (c) => MyApp()));
                 },
                 child: ListTile(
                   leading: IconButton(
@@ -257,59 +256,48 @@ class _HomePageState extends State<HomePage> {
               height: searchContainerHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children:[
+                children: [
                   ElevatedButton(
-                    onPressed: ()
-                    {
-                      Navigator.push(context, MaterialPageRoute(builder: (c)=> SearchDestinationPage()));
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => SearchDestinationPage()));
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(24)
-
-                    ),
+                        backgroundColor: Colors.grey,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(24)),
                     child: const Icon(
                       Icons.search,
                       color: Colors.white,
                       size: 25,
                     ),
                   ),
-
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(24)
-
-                    ),
+                        backgroundColor: Colors.grey,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(24)),
                     child: const Icon(
                       Icons.home,
                       color: Colors.white,
                       size: 25,
                     ),
                   ),
-
-
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(24)
-
-                    ),
+                        backgroundColor: Colors.grey,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(24)),
                     child: const Icon(
                       Icons.work,
                       color: Colors.white,
                       size: 25,
                     ),
                   ),
-
-
-
-
                 ],
               ),
             ),
