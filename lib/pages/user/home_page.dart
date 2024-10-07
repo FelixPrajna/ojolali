@@ -13,6 +13,7 @@ import 'package:ojolali/main.dart';
 import 'package:ojolali/methods/common_methods.dart';
 import 'package:ojolali/pages/user/search_destination_page.dart';
 import 'package:ojolali/pages/user/about_page.dart';
+import 'package:ojolali/pages/user/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -171,6 +172,28 @@ class _HomePageState extends State<HomePage> {
                 ),
                 title: const Text(
                   "About",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+
+              // Menu Profile
+              ListTile(
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (c) =>
+                              const ProfilePage()), // Navigasi ke halaman Profile
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.person,
+                    color: Colors.grey,
+                  ),
+                ),
+                title: const Text(
+                  "Profile",
                   style: TextStyle(color: Colors.grey),
                 ),
               ),
