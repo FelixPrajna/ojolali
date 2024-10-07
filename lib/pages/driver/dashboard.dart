@@ -48,7 +48,11 @@ class _DashboardState extends State<Dashboard>
           EarningsPage(
             userId: '',
           ),
-          TripsPage(),
+          TripsPage(
+            startLocation: '',
+            endLocation: '',
+            distance: 0.0,
+          ),
           ProfilePage(),
         ],
       ),

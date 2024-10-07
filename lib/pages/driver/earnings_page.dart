@@ -28,17 +28,18 @@ class _EarningsPageState extends State<EarningsPage> {
 
   Future<void> _loadEarnings() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<String>? tripList = prefs.getStringList('tripHistory');
+    final List<String>? completedTripList =
+        prefs.getStringList('completedTrips');
 
-    if (tripList != null) {
+    if (completedTripList != null) {
       double totalFromTrips = 0;
 
-      // Iterate through the trip history and calculate earnings for each trip
-      for (var tripJson in tripList) {
+      // Iterate through the completed trips and calculate earnings for each trip
+      for (var tripJson in completedTripList) {
         final trip = Map<String, dynamic>.from(jsonDecode(tripJson));
 
         final distanceKm = trip['distance'] as double;
-        final earningsFromTrip = (distanceKm * 10) * 1000;
+        final earningsFromTrip = (distanceKm * 10) * 1000; // Calculate earnings
         totalFromTrips += earningsFromTrip;
 
         // Add to order history
@@ -52,7 +53,7 @@ class _EarningsPageState extends State<EarningsPage> {
       }
 
       setState(() {
-        totalEarnings = totalFromTrips;
+        totalEarnings = totalFromTrips; // Update total earnings
       });
     }
   }

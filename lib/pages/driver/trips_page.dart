@@ -1,10 +1,20 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; 
-import 'dart:math'; 
+import 'dart:convert';
+import 'dart:math';
 
 class TripsPage extends StatefulWidget {
-  const TripsPage({super.key});
+  final String startLocation;
+  final String endLocation;
+  final double distance;
+
+  const TripsPage({
+    Key? key,
+    required this.startLocation,
+    required this.endLocation,
+    required this.distance,
+  }) : super(key: key);
 
   @override
   State<TripsPage> createState() => _TripsPageState();
@@ -15,13 +25,15 @@ class _TripsPageState extends State<TripsPage> {
   final TextEditingController _startLocationController =
       TextEditingController();
   final TextEditingController _endLocationController = TextEditingController();
-  final TextEditingController _distanceController =
-      TextEditingController(); // Dalam KM
 
   @override
   void initState() {
     super.initState();
     _loadTripHistory();
+
+    // Add the trip from order details
+    _addTripFromOrder(
+        widget.startLocation, widget.endLocation, widget.distance);
   }
 
   Future<void> _loadTripHistory() async {
@@ -44,27 +56,57 @@ class _TripsPageState extends State<TripsPage> {
     await prefs.setStringList('tripHistory', tripStringList);
   }
 
-  void _addTrip() {
-    if (_startLocationController.text.isNotEmpty &&
-        _endLocationController.text.isNotEmpty &&
-        _distanceController.text.isNotEmpty) {
-      final distance = double.tryParse(_distanceController.text);
-      if (distance != null) {
-        setState(() {
-          final newTrip = {
-            'orderId': _generateOrderId(),
-            'startLocation': _startLocationController.text,
-            'endLocation': _endLocationController.text,
-            'distance': distance,
-          };
-          tripHistory.add(newTrip);
-        });
-        _startLocationController.clear();
-        _endLocationController.clear();
-        _distanceController.clear();
-        _saveTripHistory(); // Save data after adding trip
-      }
+  void _addTripFromOrder(String startLocation, String endLocation, double distance) {
+    double randomDistance = _generateRandomDistance(); // Get a random distance
+    setState(() {
+      final newTrip = {
+        'orderId': _generateOrderId(),
+        'startLocation': startLocation,
+        'endLocation': endLocation,
+        'distance': randomDistance,
+        'status': 'in progress',
+      };
+      tripHistory.add(newTrip);
+    });
+    _saveTripHistory(); // Save data after adding trip
+  }
+
+  void _completeTrip(int orderId) async {
+  // Find the trip by orderId in tripHistory
+  setState(() {
+    final tripIndex =
+        tripHistory.indexWhere((trip) => trip['orderId'] == orderId);
+    if (tripIndex != -1) {
+      // Save completed trip's distance and earnings
+      final completedTrip = tripHistory[tripIndex];
+
+      // You can save completed trips in SharedPreferences or another list
+      _saveCompletedTrip(completedTrip);
+
+      // Remove the trip from the list
+      tripHistory.removeAt(tripIndex); // Remove the completed trip from the list
     }
+    });
+
+    // Update the trip status in Firebase
+  await FirebaseDatabase.instance.ref('orders/$orderId').update({
+    'status': 'completed',
+  });
+
+    // Save the changes to local storage
+    _saveTripHistory(); // Save changes in local storage
+  }
+
+  Future<void> _saveCompletedTrip(Map<String, dynamic> completedTrip) async {
+  final prefs = await SharedPreferences.getInstance();
+  final List<String>? completedTripList = prefs.getStringList('completedTrips') ?? [];
+  completedTripList?.add(jsonEncode(completedTrip));
+  await prefs.setStringList('completedTrips', completedTripList!);
+}
+
+  double _generateRandomDistance() {
+    final random = Random();
+    return random.nextDouble() * 500 + 1; // Generate a random distance between 1 and 100
   }
 
   int _generateOrderId() {
@@ -83,58 +125,30 @@ class _TripsPageState extends State<TripsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _startLocationController,
-                    decoration: const InputDecoration(
-                      labelText: 'Lokasi Awal',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _endLocationController,
-                    decoration: const InputDecoration(
-                      labelText: 'Lokasi Akhir',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _distanceController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Jarak Tempuh (KM)',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _addTrip,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text("Tambahkan Perjalanan"),
-            ),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: tripHistory.length,
                 itemBuilder: (context, index) {
                   final trip = tripHistory[index];
-                  return ListTile(
-                    title: Text(
-                      "Order ID: ${trip['orderId']}",
-                    ),
-                    subtitle: Text(
-                      "Dari: ${trip['startLocation']} ke ${trip['endLocation']} - Jarak: ${trip['distance']} KM",
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        "Order ID: ${trip['orderId']}",
+                      ),
+                      subtitle: Text(
+                        "Dari: ${trip['startLocation']} ke ${trip['endLocation']} - Jarak: ${trip['distance']} KM\nStatus: ${trip['status']}",
+                      ),
+                      trailing: trip['status'] == 'in progress'
+                          ? ElevatedButton(
+                              onPressed: () {
+                                _completeTrip(trip['orderId']);
+                              },
+                              child: const Text("Complete"),
+                            )
+                          : const Text("Completed",
+                              style: TextStyle(color: Colors.green)),
                     ),
                   );
                 },

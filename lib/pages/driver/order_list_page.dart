@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ojolali/global/global.dart';
+import 'trips_page.dart';
 
 class OrderListPage extends StatefulWidget {
   const OrderListPage({Key? key}) : super(key: key);
@@ -18,17 +18,14 @@ class _OrderListPageState extends State<OrderListPage> {
   @override
   void initState() {
     super.initState();
-    _fetchOrders();
+    _fetchPendingOrders(); // Fetch pending orders when the page initializes
   }
 
-  // Fetch orders from Firebase assigned to this driver
-  void _fetchOrders() async {
-    String driverId =
-        firebaseAuth.currentUser!.uid; // Driver's ID from global auth
-
+  // Fetch pending orders from Firebase
+  void _fetchPendingOrders() async {
     _ordersRef
-        .orderByChild('driverId')
-        .equalTo(driverId)
+        .orderByChild('status')
+        .equalTo('pending')
         .onValue
         .listen((event) {
       if (event.snapshot.exists) {
@@ -52,7 +49,7 @@ class _OrderListPageState extends State<OrderListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Your Orders"),
+        title: const Text("Pending Orders"),
       ),
       body: ListView.builder(
         itemCount: orders.length,
@@ -90,21 +87,49 @@ class _OrderListPageState extends State<OrderListPage> {
     );
   }
 
+  // Function to accept an order
   void _acceptOrder(String orderId) async {
-    await _ordersRef.child(orderId).update({
-      'status': 'accepted',
-      'driverId': firebaseAuth.currentUser!.uid, // Assign to current driver
-    });
+    // Fetch order details from Firebase
+    DatabaseEvent event = await _ordersRef.child(orderId).once();
+    if (event.snapshot.exists) {
+      Map<String, dynamic> orderData =
+          Map<String, dynamic>.from(event.snapshot.value as Map);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Order accepted!")),
-    );
+      // Update the order status in Firebase
+      await _ordersRef.child(orderId).update({
+        'status': 'accepted',
+        'driverId': firebaseAuth.currentUser!.uid, // Assign to current driver
+      });
+
+      // Navigate to TripsPage with order details
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TripsPage(
+            startLocation:
+                orderData['pickupAddress'] ?? '', // Ensure default value
+            endLocation:
+                orderData['destinationAddress'] ?? '', // Ensure default value
+            distance: orderData['distance'] ?? 0.0, // Ensure default value
+          ),
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order accepted!")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order not found!")),
+      );
+    }
   }
 
+  // Function to reject an order
   void _rejectOrder(String orderId) async {
     await _ordersRef.child(orderId).update({
       'status': 'rejected',
-      'driverId': null, // Remove the driver assignment
+      'driverId': null, // Remove the driver assignment if rejected
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
