@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ojolali/global/global.dart';
+import 'package:ojolali/pages/driver/order_list_page.dart';
 
 class HomeDriverPage extends StatefulWidget {
   const HomeDriverPage({super.key});
@@ -14,12 +15,12 @@ class HomeDriverPage extends StatefulWidget {
   State<HomeDriverPage> createState() => _HomeDriverPageState();
 }
 
-class  _HomeDriverPageState extends State<HomeDriverPage> {
+class _HomeDriverPageState extends State<HomeDriverPage> {
   final Completer<GoogleMapController> googleMapCompleterController =
       Completer<GoogleMapController>();
   GoogleMapController? controllerGoogleMap;
   Position? currentPositionOfUser;
-  
+
   void updateMapTheme(GoogleMapController controller) {
     getJsonFileFromThemes("themes/night_style.json")
         .then((value) => setGoogleMapStyle(value, controller));
@@ -49,26 +50,42 @@ class  _HomeDriverPageState extends State<HomeDriverPage> {
     controllerGoogleMap!
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        GoogleMap(
-          mapType: MapType.normal,
-          myLocationEnabled: true,
-          initialCameraPosition: googlePlexInitialPosition,
-          onMapCreated: (GoogleMapController mapController) {
-            controllerGoogleMap = mapController;
-            updateMapTheme(controllerGoogleMap!);
+      appBar: AppBar(
+        title: Text("Driver Home"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              // Navigasi ke halaman order
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const OrderListPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            myLocationEnabled: true,
+            initialCameraPosition: googlePlexInitialPosition,
+            onMapCreated: (GoogleMapController mapController) {
+              controllerGoogleMap = mapController;
+              updateMapTheme(controllerGoogleMap!);
 
-            googleMapCompleterController.complete(controllerGoogleMap);
+              googleMapCompleterController.complete(controllerGoogleMap);
 
-            getCurrentLiveLocationOfDriver();
-          },
-        ),
-      ],
-    ));
+              getCurrentLiveLocationOfDriver();
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
